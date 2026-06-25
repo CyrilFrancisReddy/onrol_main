@@ -79,7 +79,7 @@ let lenis = null;
     ticking = false;
     const h = document.documentElement.scrollHeight - window.innerHeight;
     const p = h > 0 ? Math.min(1, Math.max(0, window.scrollY / h)) : 0;
-    bar.style.width = (p * 100).toFixed(2) + '%';
+    bar.style.height = (p * (window.innerHeight - 56)).toFixed(1) + 'px';
   }
   window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
   window.addEventListener('resize', update, { passive: true });
@@ -447,31 +447,17 @@ let lenis = null;
   update();
 })();
 
-/* ===== Custom cursor: small pointy arrow + trailing tail (desktop) ========
-   A small arrow sits at the pointer; a short chain of dots trails behind it,
-   each chasing the one ahead so it tapers off like a tail. Native cursor is
-   hidden only once this is live, so touch / reduced-motion / no-JS keep it. */
+/* ===== Custom cursor: small pointy arrow (desktop) =====================
+   A small arrow sits at the pointer. Native cursor is hidden only once
+   this is live, so touch / reduced-motion / no-JS keep the system one. */
 (function () {
   const cur = document.getElementById('cur');
   if (!cur || reduceMotion || !(window.matchMedia && window.matchMedia('(pointer: fine)').matches)) return;
   root.classList.add('cursor-on');
-  const N = 6, dots = [];
-  for (let k = 0; k < N; k++) { const d = document.createElement('div'); d.className = 'cur-tail'; document.body.appendChild(d); dots.push({ el: d, x: 0, y: 0 }); }
   let x = 0, y = 0, raf = 0, on = false, pressed = false;
   function loop() {
     raf = 0;
     cur.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)' + (pressed ? ' scale(.8)' : '');
-    let px = x + 6, py = y + 9, moving = false; // emanate from the arrow's body, trailing behind
-    for (let k = 0; k < N; k++) {
-      const d = dots[k];
-      d.x += (px - d.x) * 0.34; d.y += (py - d.y) * 0.34;
-      const s = 1 - k / (N + 1);
-      d.el.style.transform = 'translate3d(' + d.x.toFixed(1) + 'px,' + d.y.toFixed(1) + 'px,0) scale(' + s.toFixed(2) + ')';
-      d.el.style.opacity = on ? (0.4 * s).toFixed(2) : '0';
-      if (Math.abs(px - d.x) > 0.4 || Math.abs(py - d.y) > 0.4) moving = true;
-      px = d.x; py = d.y;
-    }
-    if (moving) raf = requestAnimationFrame(loop);
   }
   window.addEventListener('mousemove', (e) => {
     x = e.clientX; y = e.clientY;
@@ -502,4 +488,37 @@ let lenis = null;
       setTimeout(() => { el.style.transition = ''; }, 420);
     });
   });
+})();
+
+/* ===== Brand wordmark: typewriter cycle through Indian languages ===== */
+(function () {
+  const brand = document.querySelector('.nav__brand');
+  if (!brand) return;
+  // "Onrol" across Indian scripts (approximate phonetic transliterations — tweak freely).
+  const names = ['ONROL', 'ऑनरोल', 'অনরোল', 'ஒன்ரோல்', 'ఒన్రోల్', 'ಒನ್ರೋಲ್', 'ഓൺറോൾ', 'ઓનરોલ', 'ਓਨਰੋਲ', 'ଓନରୋଲ', 'اونرول'];
+  if (reduceMotion) { brand.textContent = 'ONROL'; return; }   // honour reduced-motion: stay static
+  const TYPE = 90, ERASE = 45, HOLD = 2600, GAP = 400;
+  let i = 0;
+  brand.classList.add('brand-type');
+  brand.textContent = '';
+  function typeIn(word, done) {
+    const chars = Array.from(word); let n = 0;
+    (function step() {
+      brand.textContent = chars.slice(0, ++n).join('');
+      setTimeout(n < chars.length ? step : done, n < chars.length ? TYPE : HOLD);
+    })();
+  }
+  function eraseOut(done) {
+    let chars = Array.from(brand.textContent);
+    (function step() {
+      chars = chars.slice(0, -1);
+      brand.textContent = chars.join('');
+      setTimeout(chars.length ? step : done, chars.length ? ERASE : GAP);
+    })();
+  }
+  (function loop() {
+    typeIn(names[i], function () {
+      eraseOut(function () { i = (i + 1) % names.length; loop(); });
+    });
+  })();
 })();
