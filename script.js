@@ -534,27 +534,31 @@ let lenis = null;
   function box(x, y, w, h, soft) { for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) on(x + i, y + j, soft); }
 
   const L = 6, R = 13; // eye columns
-  function eyeOpen(c) { box(c - 1, 6, 3, 3); }
-  function eyeLine(c) { box(c - 1, 8, 3, 1); }
-  function eyeArc(c) { on(c - 1, 7); on(c, 6); on(c + 1, 7); }
-  function eyeBig(c) { box(c - 1, 5, 4, 4); }
-  function eyeHeart(c, s) { on(c - 2, 6, s); on(c - 1, 5, s); on(c, 6, s); on(c + 1, 5, s); on(c + 2, 6, s); on(c - 1, 7, s); on(c + 1, 7, s); on(c, 8, s); }
-  function smile() { on(6, 13); on(13, 13); on(7, 14); on(12, 14); on(8, 15); on(9, 15); on(10, 15); on(11, 15); }
-  function grinMouth() { box(7, 12, 6, 1); on(6, 13); on(13, 13); on(7, 14); on(12, 14); on(8, 15); on(9, 15); on(10, 15); on(11, 15); box(8, 13, 4, 2, true); }
-  function frown() { on(6, 15); on(13, 15); on(7, 14); on(12, 14); on(8, 13); on(9, 13); on(10, 13); on(11, 13); }
-  function mouthO() { box(8, 12, 4, 3); }
-  function smallMouth() { box(8, 14, 4, 1); }
+  function blush(strong) { on(3, 11, true); on(4, 11, true); on(15, 11, true); on(16, 11, true); if (strong) { on(3, 12, true); on(16, 12, true); } }
+  // big round eye with a sparkle highlight (cute)
+  function eyeRound(c) { on(c-1,6); on(c,6); on(c-2,7); on(c-1,7); on(c,7); on(c+1,7); on(c-2,8); on(c-1,8); on(c,8); on(c+1,8); on(c-1,9); on(c,9); on(c-2,7,true); }
+  function eyeBlinkE(c) { on(c-2,8); on(c-1,8); on(c,8); on(c+1,8); }
+  function eyeArc(c) { on(c-2,8); on(c-1,7); on(c,7); on(c+1,8); }                 // ^_^ happy
+  function eyeWide(c) { on(c-1,6); on(c,6); on(c-2,7); on(c+1,7); on(c-2,8); on(c+1,8); on(c-1,9); on(c,9); } // hollow O
+  function eyeHeartE(c, s) { on(c-2,6,s); on(c-1,6,s); on(c+1,6,s); on(c+2,6,s); on(c-2,7,s); on(c-1,7,s); on(c,7,s); on(c+1,7,s); on(c+2,7,s); on(c-1,8,s); on(c,8,s); on(c+1,8,s); on(c,9,s); }
+  function eyeSleepE(c) { on(c-2,8); on(c-1,9); on(c,9); on(c+1,8); }
+  function mSmile() { on(7,14); on(8,15); on(9,15); on(10,15); on(11,14); }
+  function mBigSmile() { on(6,13); on(12,13); on(7,14); on(8,14); on(9,14); on(10,14); on(11,14); on(8,15); on(9,15); on(10,15); }
+  function mCat() { on(7,14); on(8,15); on(9,14); on(10,15); on(11,14); }          // :3
+  function mO() { on(9,13); on(8,14); on(10,14); on(9,15); }
+  function mSad() { on(7,15); on(8,14); on(9,14); on(10,14); on(11,15); }
+  function mSmall() { on(8,14); on(9,14); on(10,14); }
 
   const faces = {
-    happy:     function () { eyeOpen(L); eyeOpen(R); smile(); },
-    grin:      function () { eyeArc(L); eyeArc(R); grinMouth(); },
-    wink:      function () { eyeOpen(L); eyeLine(R); smile(); },
-    surprised: function () { eyeBig(L); eyeBig(R); mouthO(); },
-    love:      function () { eyeHeart(L); eyeHeart(R); smile(); on(3, 11, true); on(16, 11, true); },
-    cool:      function () { box(3, 7, 6, 2); box(11, 7, 6, 2); on(9, 8); smile(); },
-    sleepy:    function () { eyeLine(L); eyeLine(R); smallMouth(); on(15, 4, true); on(16, 3, true); },
-    sad:       function () { eyeOpen(L); eyeOpen(R); frown(); on(4, 10, true); },
-    blink:     function () { eyeLine(L); eyeLine(R); smile(); },
+    happy:     function () { eyeRound(L); eyeRound(R); mSmile(); blush(); },
+    grin:      function () { eyeArc(L); eyeArc(R); mBigSmile(); blush(); },
+    wink:      function () { eyeRound(L); eyeArc(R); mSmile(); blush(); },
+    surprised: function () { eyeWide(L); eyeWide(R); mO(); },
+    love:      function () { eyeHeartE(L); eyeHeartE(R); mCat(); blush(true); },
+    cool:      function () { box(4, 7, 5, 2); box(11, 7, 5, 2); on(9, 8); mSmile(); },
+    sleepy:    function () { eyeSleepE(L); eyeSleepE(R); mSmall(); on(15, 4, true); on(16, 3, true); on(17, 2, true); },
+    sad:       function () { eyeRound(L); eyeRound(R); mSad(); on(3, 10, true); },
+    blink:     function () { eyeBlinkE(L); eyeBlinkE(R); mSmile(); blush(); },
   };
   let current = 'happy';
   function show(n) { current = n; clear(); (faces[n] || faces.happy)(); }

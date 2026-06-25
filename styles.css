@@ -484,12 +484,12 @@ html.cursor-on, html.cursor-on * { cursor: none !important; }
 /* ===== Modern texture: film grain (baked noise tile — cheap, rasterized once) ===== */
 .grain {
   position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
-  z-index: 250; pointer-events: none; opacity: .24; mix-blend-mode: overlay; will-change: transform;
-  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='300'%20height='300'%3E%3Cfilter%20id='g'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.85'%20numOctaves='3'%20stitchTiles='stitch'/%3E%3CfeColorMatrix%20type='saturate'%20values='0'/%3E%3C/filter%3E%3Crect%20width='300'%20height='300'%20filter='url(%23g)'/%3E%3C/svg%3E");
-  background-size: 300px 300px;
+  z-index: 250; pointer-events: none; opacity: .22; mix-blend-mode: multiply; will-change: transform;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='200'%3E%3Cfilter%20id='g'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.6'%20numOctaves='3'%20stitchTiles='stitch'/%3E%3CfeColorMatrix%20type='matrix'%20values='0.34%200.34%200.34%200%200%200.34%200.34%200.34%200%200%200.34%200.34%200.34%200%200%200%200%200%200%201'/%3E%3C/filter%3E%3Crect%20width='200'%20height='200'%20filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
   animation: grainShift 1.3s steps(1) infinite;
 }
-.dark .grain { opacity: .18; mix-blend-mode: screen; }
+.dark .grain { opacity: .15; mix-blend-mode: screen; }
 @keyframes grainShift {
   0%   { transform: translate(0%, 0%); }
   11%  { transform: translate(-9%, -5%); }
@@ -557,7 +557,7 @@ html.cursor-on, html.cursor-on * { cursor: none !important; }
 
 /* gradient headline — colourful in BOTH themes (deep orange on light, peach→orange on dark) */
 .hero__title .char, .apply__title .char {
-  background-image: linear-gradient(180deg, #ff7e36 0%, #e84f12 58%, #c63606 100%);
+  background-image: linear-gradient(135deg, #ff8c1a 0%, #ff5a1f 52%, #d83a06 100%);
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: transparent;
 }
