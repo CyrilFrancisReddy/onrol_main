@@ -533,8 +533,7 @@ let lenis = null;
   function on(x, y, soft) { x = Math.round(x); y = Math.round(y); if (x < 0 || x >= N || y < 0 || y >= N) return; cells[y * N + x].className = 'bot__px on' + (soft ? ' on--soft' : ''); }
   function box(x, y, w, h, soft) { for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) on(x + i, y + j, soft); }
 
-  const L = 6, R = 13; // eye columns
-  function blush(strong) { on(3, 11, true); on(4, 11, true); on(15, 11, true); on(16, 11, true); if (strong) { on(3, 12, true); on(16, 12, true); } }
+  const L = 6, R = 13; // eye columns  (bot name: Vector)
   // big round eye with a sparkle highlight (cute)
   function eyeRound(c) { on(c-1,6); on(c,6); on(c-2,7); on(c-1,7); on(c,7); on(c+1,7); on(c-2,8); on(c-1,8); on(c,8); on(c+1,8); on(c-1,9); on(c,9); on(c-2,7,true); }
   function eyeBlinkE(c) { on(c-2,8); on(c-1,8); on(c,8); on(c+1,8); }
@@ -550,15 +549,15 @@ let lenis = null;
   function mSmall() { on(8,14); on(9,14); on(10,14); }
 
   const faces = {
-    happy:     function () { eyeRound(L); eyeRound(R); mSmile(); blush(); },
-    grin:      function () { eyeArc(L); eyeArc(R); mBigSmile(); blush(); },
-    wink:      function () { eyeRound(L); eyeArc(R); mSmile(); blush(); },
+    happy:     function () { eyeRound(L); eyeRound(R); mSmile(); },
+    grin:      function () { eyeArc(L); eyeArc(R); mBigSmile(); },
+    wink:      function () { eyeRound(L); eyeArc(R); mSmile(); },
     surprised: function () { eyeWide(L); eyeWide(R); mO(); },
-    love:      function () { eyeHeartE(L); eyeHeartE(R); mCat(); blush(true); },
+    love:      function () { eyeHeartE(L); eyeHeartE(R); mCat(); },
     cool:      function () { box(4, 7, 5, 2); box(11, 7, 5, 2); on(9, 8); mSmile(); },
     sleepy:    function () { eyeSleepE(L); eyeSleepE(R); mSmall(); on(15, 4, true); on(16, 3, true); on(17, 2, true); },
     sad:       function () { eyeRound(L); eyeRound(R); mSad(); on(3, 10, true); },
-    blink:     function () { eyeBlinkE(L); eyeBlinkE(R); mSmile(); blush(); },
+    blink:     function () { eyeBlinkE(L); eyeBlinkE(R); mSmile(); },
   };
   let current = 'happy';
   function show(n) { current = n; clear(); (faces[n] || faces.happy)(); }
