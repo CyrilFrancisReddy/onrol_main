@@ -522,3 +522,65 @@ let lenis = null;
     });
   })();
 })();
+
+/* ===== Pixel bot mascot (bottom-left): reacts to user actions, many emotions ===== */
+(function () {
+  const bot = document.getElementById('bot');
+  if (!bot) return;
+  const N = 20, cells = [];
+  for (let i = 0; i < N * N; i++) { const d = document.createElement('span'); d.className = 'bot__px'; bot.appendChild(d); cells.push(d); }
+  function clear() { for (const d of cells) d.className = 'bot__px'; }
+  function on(x, y, soft) { x = Math.round(x); y = Math.round(y); if (x < 0 || x >= N || y < 0 || y >= N) return; cells[y * N + x].className = 'bot__px on' + (soft ? ' on--soft' : ''); }
+  function box(x, y, w, h, soft) { for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) on(x + i, y + j, soft); }
+
+  const L = 6, R = 13; // eye columns
+  function eyeOpen(c) { box(c - 1, 6, 3, 3); }
+  function eyeLine(c) { box(c - 1, 8, 3, 1); }
+  function eyeArc(c) { on(c - 1, 7); on(c, 6); on(c + 1, 7); }
+  function eyeBig(c) { box(c - 1, 5, 4, 4); }
+  function eyeHeart(c, s) { on(c - 2, 6, s); on(c - 1, 5, s); on(c, 6, s); on(c + 1, 5, s); on(c + 2, 6, s); on(c - 1, 7, s); on(c + 1, 7, s); on(c, 8, s); }
+  function smile() { on(6, 13); on(13, 13); on(7, 14); on(12, 14); on(8, 15); on(9, 15); on(10, 15); on(11, 15); }
+  function grinMouth() { box(7, 12, 6, 1); on(6, 13); on(13, 13); on(7, 14); on(12, 14); on(8, 15); on(9, 15); on(10, 15); on(11, 15); box(8, 13, 4, 2, true); }
+  function frown() { on(6, 15); on(13, 15); on(7, 14); on(12, 14); on(8, 13); on(9, 13); on(10, 13); on(11, 13); }
+  function mouthO() { box(8, 12, 4, 3); }
+  function smallMouth() { box(8, 14, 4, 1); }
+
+  const faces = {
+    happy:     function () { eyeOpen(L); eyeOpen(R); smile(); },
+    grin:      function () { eyeArc(L); eyeArc(R); grinMouth(); },
+    wink:      function () { eyeOpen(L); eyeLine(R); smile(); },
+    surprised: function () { eyeBig(L); eyeBig(R); mouthO(); },
+    love:      function () { eyeHeart(L); eyeHeart(R); smile(); on(3, 11, true); on(16, 11, true); },
+    cool:      function () { box(3, 7, 6, 2); box(11, 7, 6, 2); on(9, 8); smile(); },
+    sleepy:    function () { eyeLine(L); eyeLine(R); smallMouth(); on(15, 4, true); on(16, 3, true); },
+    sad:       function () { eyeOpen(L); eyeOpen(R); frown(); on(4, 10, true); },
+    blink:     function () { eyeLine(L); eyeLine(R); smile(); },
+  };
+  let current = 'happy';
+  function show(n) { current = n; clear(); (faces[n] || faces.happy)(); }
+
+  let holdUntil = 0, asleep = false, sleepAt = performance.now() + 13000;
+  let pi = 0, switchAt = 0, blinkAt = 1800;
+  const pool = ['happy', 'happy', 'grin', 'wink', 'cool', 'love'];
+  function react(n, ms) { show(n); holdUntil = performance.now() + (ms || 900); }
+  function wake() { sleepAt = performance.now() + 13000; if (asleep) { asleep = false; holdUntil = 0; } }
+  function tick() {
+    const t = performance.now();
+    if (asleep) return;
+    if (t < holdUntil) return;
+    if (t > sleepAt) { asleep = true; show('sleepy'); return; }
+    if (t > switchAt) { show(pool[pi++ % pool.length]); switchAt = t + 3200 + Math.random() * 1800; }
+    if (t > blinkAt) { const p = current; clear(); faces.blink(); blinkAt = t + 3600 + Math.random() * 3000; setTimeout(function () { if (!asleep && performance.now() >= holdUntil) show(p); }, 130); }
+  }
+  show('happy');
+  setInterval(tick, 300);
+
+  window.addEventListener('mousedown', function () { react('surprised', 650); wake(); }, { passive: true });
+  window.addEventListener('scroll', function () { react('grin', 600); wake(); }, { passive: true });
+  window.addEventListener('mousemove', wake, { passive: true });
+  window.addEventListener('keydown', wake);
+  bot.addEventListener('mouseenter', function () { react('love', 1200); });
+  bot.addEventListener('click', function (e) { e.stopPropagation(); react('love', 1500); });
+  const tb = document.getElementById('themeBtn'); if (tb) tb.addEventListener('click', function () { react('wink', 900); });
+  const af = document.getElementById('applyForm'); if (af) af.addEventListener('submit', function () { react('love', 1800); });
+})();
