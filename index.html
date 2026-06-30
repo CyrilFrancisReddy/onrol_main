@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@500,700,900&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 
   <script>
@@ -37,13 +37,18 @@
 </head>
 <body id="top">
 
+  <div class="aurora" aria-hidden="true"></div>
   <div class="scroll-prog" id="scrollProg" aria-hidden="true"></div>
   <div class="atmos" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
   <div class="dots" aria-hidden="true"></div>
   <div class="haze" aria-hidden="true"></div>
   <div class="cur" id="cur" aria-hidden="true"></div>
-  <div class="bot" id="bot" aria-hidden="true" title="Vector"></div>
+  <div class="bot" id="bot">
+    <div class="bot__bubble is-hidden" id="botBubble"></div>
+    <form class="bot__ask" id="botAsk" aria-label="Ask Vector"><input id="botInput" type="text" placeholder="ask Vector…" autocomplete="off" /></form>
+    <button class="bot__face" id="botFace" type="button" aria-label="Vector — click to ask a question"><div class="bot__matrix" id="matrix"></div></button>
+  </div>
 
   <div class="frame">
 
@@ -60,24 +65,30 @@
       </div>
     </header>
 
+    <div class="brandmark" aria-hidden="true"><span class="bm__d">ONROL</span><span class="bm__f">ONROL</span></div>
+
     <main>
 
       <!-- ===== Hero ===== -->
       <section class="mod hero">
         <div class="bar"><span class="bar__ix">00</span><span class="bar__name">India's AI Execution School</span><span class="bar__meta">Scroll ↓</span></div>
         <div class="hero__title-cell">
+          <div class="hero__media" aria-hidden="true">
+            <div class="hero__bg is-on" id="heroBgA"></div>
+            <div class="hero__bg" id="heroBgB"></div>
+          </div>
           <h1 class="hero__title">Turn AI curiosity<br />into <span class="accent">shipped work</span>.</h1>
         </div>
         <div class="cells cells--2 hero__foot">
           <div class="cell">
-            <p class="hero__sub reveal">Build real automations, AI agents and vibe-coded sites in 30 days — live, online, no coding needed. Leave with a portfolio that proves execution.</p>
+            <p class="hero__sub reveal">ONROL turns AI curiosity into shipped work — useful automations, deployable web apps, AI agents, and a portfolio that proves execution. 30 days, live &amp; online, no coding needed.</p>
           </div>
           <div class="cell">
             <div class="hero__cta reveal">
               <a class="btn btn--solid" href="#apply">Apply now <span class="arr">→</span></a>
               <a class="btn btn--ghost" href="#how">See how it works</a>
             </div>
-            <p class="hero__live reveal"><span class="live-dot" aria-hidden="true"></span><span class="live-num" id="liveNum">10,000</span>&nbsp;builders shipping right now</p>
+            <p class="hero__live reveal"><span class="live-dot" aria-hidden="true"></span><span class="live-num" id="liveNum">10,000</span>+&nbsp;builders on ONROL</p>
           </div>
         </div>
       </section>
@@ -123,25 +134,25 @@
           <button class="cell card reveal" data-detail="0" type="button">
             <span class="card__img w-1" aria-hidden="true"></span>
             <span class="card__h">AI Automations</span>
-            <span class="card__t">Workflows &amp; operations</span>
+            <span class="card__t">Automate workflows, lead routing, research, follow-ups &amp; daily operations.</span>
             <span class="card__arr">Explore <span class="arr">→</span></span>
           </button>
           <button class="cell card reveal" data-detail="1" type="button">
             <span class="card__img w-2" aria-hidden="true"></span>
             <span class="card__h">AI Agents</span>
-            <span class="card__t">Tool-using agents</span>
+            <span class="card__t">Tool-using agents that reason, call APIs &amp; complete multi-step tasks.</span>
             <span class="card__arr">Explore <span class="arr">→</span></span>
           </button>
           <button class="cell card reveal" data-detail="2" type="button">
             <span class="card__img w-3" aria-hidden="true"></span>
             <span class="card__h">Vibe-Coded Sites</span>
-            <span class="card__t">Apps &amp; pages</span>
+            <span class="card__t">Ship polished pages &amp; apps with AI-assisted coding &amp; deployment.</span>
             <span class="card__arr">Explore <span class="arr">→</span></span>
           </button>
           <button class="cell card reveal" data-detail="3" type="button">
             <span class="card__img w-4" aria-hidden="true"></span>
             <span class="card__h">Portfolio</span>
-            <span class="card__t">Proof of execution</span>
+            <span class="card__t">Three deployable projects that prove you can execute.</span>
             <span class="card__arr">Explore <span class="arr">→</span></span>
           </button>
         </div>
@@ -157,9 +168,22 @@
         </div>
       </div>
 
+      <!-- ===== Curriculum ===== -->
+      <section class="mod" id="curriculum">
+        <div class="bar"><span class="bar__ix">03</span><span class="bar__name">The curriculum</span><span class="bar__meta">12 weeks · 5 modules</span></div>
+        <div class="head"><h2 class="sec-title">Five modules, twelve weeks, five AI systems shipped.</h2></div>
+        <ol class="cell curri">
+          <li class="curri__row reveal"><span class="curri__wk">Weeks 1–3</span><span class="curri__h">AI Foundations, Prompting &amp; Diffusion</span><span class="curri__t">LLMs &amp; ethics, prompt engineering, image generation, AI video &amp; audio.</span></li>
+          <li class="curri__row reveal"><span class="curri__wk">Weeks 4–5</span><span class="curri__h">Automation &amp; Workflows</span><span class="curri__t">n8n, Zapier &amp; Make. WhatsApp, email &amp; Telegram. APIs &amp; integrations.</span></li>
+          <li class="curri__row reveal"><span class="curri__wk">Weeks 6–8</span><span class="curri__h">AI Agents &amp; Agentic Workflows</span><span class="curri__t">Single &amp; multi-agent systems, RAG basics, agentic frameworks.</span></li>
+          <li class="curri__row reveal"><span class="curri__wk">Weeks 9–10</span><span class="curri__h">Vibe Coding &amp; App Development</span><span class="curri__t">Vibe coding with Lovable, full-stack AI apps, backend, database, auth &amp; deploy.</span></li>
+          <li class="curri__row reveal"><span class="curri__wk">Weeks 11–12</span><span class="curri__h">Claude Ecosystem &amp; Career</span><span class="curri__t">Claude skills, code &amp; connectors, OpenAI ecosystem, portfolio &amp; freelancing.</span></li>
+        </ol>
+      </section>
+
       <!-- ===== Demo ===== -->
       <section class="mod section--alt" id="demo">
-        <div class="bar"><span class="bar__ix">03</span><span class="bar__name">Try it</span><span class="bar__meta">Console</span></div>
+        <div class="bar"><span class="bar__ix">04</span><span class="bar__name">Try it</span><span class="bar__meta">Console</span></div>
         <div class="head"><h2 class="sec-title">Describe a task. Watch it build.</h2></div>
         <div class="cell demo">
           <form class="demo__form" id="demoForm">
@@ -172,24 +196,92 @@
 
       <!-- ===== Personas ===== -->
       <section class="mod" id="personas">
-        <div class="bar"><span class="bar__ix">04</span><span class="bar__name">Built for you</span><span class="bar__meta">12 profiles</span></div>
-        <div class="head"><h2 class="sec-title">Pick your profile</h2></div>
+        <div class="bar"><span class="bar__ix">05</span><span class="bar__name">Built for you</span><span class="bar__meta">12 profiles</span></div>
+        <div class="head"><h2 class="sec-title">ONROL fits twelve kinds of Indians.</h2></div>
         <div class="cells cells--3 chips" id="chips">
-          <button class="cell chip" type="button" data-rec="AI Automations — free up your day">Student</button>
-          <button class="cell chip" type="button" data-rec="AI Agents — ship internal tools">Engineer</button>
-          <button class="cell chip" type="button" data-rec="Vibe-Coded Websites — launch your product">Founder</button>
-          <button class="cell chip" type="button" data-rec="AI Automations — win back hours">Working pro</button>
-          <button class="cell chip" type="button" data-rec="Agents + Sites — productize your craft">Freelancer</button>
-          <button class="cell chip" type="button" data-rec="Vibe-Coded Websites — scale content">Creator</button>
+          <button class="cell chip" type="button" data-rec="An AI agent that automates one painful task in your job, a portfolio site, and a fine-tuned model on your domain data.">Engineer</button>
+          <button class="cell chip" type="button" data-rec="A deployed AI project in your field, a public portfolio site, an ATS-beating resume, and an interview-prep AI tutor.">Student</button>
+          <button class="cell chip" type="button" data-rec="An AI lesson-plan generator, a quiz engine personalised per student, and a parent-update auto-summary system.">Teacher</button>
+          <button class="cell chip" type="button" data-rec="A cold-outreach AI agent, a lead-scoring system, an AI content pipeline, and automated CRM hygiene.">Sales &amp; marketing</button>
+          <button class="cell chip" type="button" data-rec="An AI listing writer, virtual staging, a WhatsApp lead-qualification bot, and a property-matching engine.">Real-estate</button>
+          <button class="cell chip" type="button" data-rec="A full MVP shipped in week one, an AI customer-support agent, and a competitive-intelligence research bot.">Founder</button>
+          <button class="cell chip" type="button" data-rec="An AI workflow that automates ~30% of your daily job, a personal AI assistant, and a side-project that earns.">Working pro</button>
+          <button class="cell chip" type="button" data-rec="Three deployed AI projects, a cold-outreach system, an ATS-beating resume, and an interview-prep AI tutor.">Job-seeker</button>
+          <button class="cell chip" type="button" data-rec="A productized AI service, workflow templates you sell, and an automated client-outreach pipeline.">Freelancer</button>
+          <button class="cell chip" type="button" data-rec="A content multiplier (1 idea → 5 platforms), an AI video editor, a community manager, and newsletter automation.">Creator</button>
+          <button class="cell chip" type="button" data-rec="A WhatsApp business bot, automated payment reminders, a social-content pipeline, and a review-monitoring system.">SMB owner</button>
+          <button class="cell chip" type="button" data-rec="A freelance-ready AI service offer, an AI portfolio site, a LinkedIn outreach pipeline, and a personal brand.">Returning to work</button>
         </div>
-        <div class="cell chips__out-cell"><p class="chips__out" id="chipsOut">Select a profile to see your recommended starting track.</p></div>
+        <div class="cell chips__out-cell"><p class="chips__out" id="chipsOut">Tap a profile above — see exactly what you'll build and how ONROL helps you ship.</p></div>
+      </section>
+
+      <!-- ===== Testimonials ===== -->
+      <section class="mod" id="learners">
+        <div class="bar"><span class="bar__ix">06</span><span class="bar__name">From learners</span><span class="bar__meta">Outcomes</span></div>
+        <div class="head"><h2 class="sec-title">What learners say after they start building.</h2></div>
+        <div class="cells cells--3 quotes">
+          <figure class="cell quote reveal">
+            <blockquote class="quote__text">"Before ONROL I had a folder of saved tutorials and zero shipped projects. By the end I had three live URLs I could send recruiters."</blockquote>
+            <figcaption class="quote__by">Sandeep Kulkarni <span>B.Tech student · Nagpur</span></figcaption>
+          </figure>
+          <figure class="cell quote reveal">
+            <blockquote class="quote__text">"I went from 'AI is interesting' to running a Make.com automation that handles half my reporting. I got the time back inside a week."</blockquote>
+            <figcaption class="quote__by">Fatima Sheikh <span>Marketing manager · Lucknow</span></figcaption>
+          </figure>
+          <figure class="cell quote reveal">
+            <blockquote class="quote__text">"ONROL helped me package my skills into AI automation offers. Two new retainer clients in the month after the cohort."</blockquote>
+            <figcaption class="quote__by">Joel Mathew <span>Freelance designer · Kochi</span></figcaption>
+          </figure>
+        </div>
+        <div class="cell quote__disc"><p>Quotes represent past learner outcomes. Illustrative names are used until verified alumni photos roll in.</p></div>
+      </section>
+
+      <!-- ===== Founder ===== -->
+      <section class="mod section--alt" id="founder">
+        <div class="bar"><span class="bar__ix">07</span><span class="bar__name">Why we built ONROL</span><span class="bar__meta">Founder</span></div>
+        <div class="head"><h2 class="sec-title">Built for people who ship AI — not those who just talk about it.</h2></div>
+        <div class="cell founder">
+          <p class="founder__lead">ONROL was founded by Dr. Neeraja Reddy after watching ambitious learners finish five AI courses and a hundred tutorials without shipping a single thing. 16+ years of global experience, a Doctorate in Business Administration, and a healthcare &amp; EdTech background across the US and UK — previously founder of Yajur Public School and co-founder of Vivencia Educational Services.</p>
+          <ul class="founder__list">
+            <li><b>Learning by shipping.</b> Every week ends with a deployed artefact — not a quiz score or a slide deck.</li>
+            <li><b>Tools that work in India.</b> INR pricing, India-local case studies, mentors in English, Hindi &amp; Telugu.</li>
+            <li><b>Mentors who are building.</b> Practitioners running real AI products — not experts reciting last year's slides.</li>
+            <li><b>Access over gatekeeping.</b> Tier-2 city, no CS degree, non-traditional background — the curriculum is the same.</li>
+          </ul>
+          <p class="founder__by">— Dr. Neeraja Reddy, Founder · 100+ builders trained across 7 cohorts · Jubilee Hills, Hyderabad</p>
+        </div>
+      </section>
+
+      <!-- ===== Community ===== -->
+      <section class="mod" id="community">
+        <div class="bar"><span class="bar__ix">08</span><span class="bar__name">Join the community</span><span class="bar__meta">10K+ members</span></div>
+        <div class="head"><h2 class="sec-title">Build alongside 10,000+ shippers.</h2></div>
+        <div class="cell community">
+          <p class="community__lead">Connect with builders shipping AI products every week — share tools, get unstuck, and grow together. Channels for resources, ai-tools, projects, wins and voice-chat.</p>
+          <a class="btn btn--solid" href="https://wa.me/919609312345" target="_blank" rel="noopener noreferrer">Join WhatsApp <span class="arr">→</span></a>
+        </div>
+      </section>
+
+      <!-- ===== Journey pipeline ===== -->
+      <section class="mod" id="journey">
+        <div class="bar"><span class="bar__ix">09</span><span class="bar__name">Your journey</span><span class="bar__meta">Learn → Earn</span></div>
+        <div class="head"><h2 class="sec-title">From learning to execution to impact.</h2></div>
+        <div class="cell pipe">
+          <ol class="pipe__track">
+            <li class="pipe__stage"><span class="pipe__num">1</span><span class="pipe__h">Learn</span><span class="pipe__t">Master AI tools</span></li>
+            <li class="pipe__stage"><span class="pipe__num">2</span><span class="pipe__h">Build</span><span class="pipe__t">Create real projects</span></li>
+            <li class="pipe__stage"><span class="pipe__num">3</span><span class="pipe__h">Launch</span><span class="pipe__t">Ship to the web</span></li>
+            <li class="pipe__stage"><span class="pipe__num">4</span><span class="pipe__h">Earn</span><span class="pipe__t">Monetize your skills</span></li>
+          </ol>
+        </div>
       </section>
 
       <!-- ===== Apply ===== -->
       <section class="mod apply" id="apply">
-        <div class="bar"><span class="bar__ix">06</span><span class="bar__name">Rolling admissions</span><span class="bar__meta">Apply</span></div>
+        <div class="bar"><span class="bar__ix">10</span><span class="bar__name">Rolling admissions</span><span class="bar__meta">Cohort 08 · 4 Aug 2026</span></div>
         <div class="head"><h2 class="apply__title">Apply to the<br />next cohort.</h2></div>
         <div class="cell apply__cell">
+          <p class="apply__cohort">AI Generalist · Cohort 08 · starts 4 Aug 2026 · limited seats. Not ready to commit? Join the free 90-minute Masterclass — AI agents + vibe coding, no pitch.</p>
           <form class="apply__form" id="applyForm">
             <input id="applyName" type="text" placeholder="Your name" autocomplete="name" required />
             <input id="applyEmail" type="email" placeholder="Email address" autocomplete="email" required />
@@ -206,27 +298,38 @@
       <div class="cells cells--4 foot__grid">
         <div class="cell foot__brand">
           <a href="#top" class="nav__brand">ONROL</a>
-          <p class="foot__tag">India's AI Execution School. Turn AI curiosity into shipped work.</p>
+          <p class="foot__tag">India's AI Execution School. A Hyderabad-based AI education ecosystem focused on execution, outcomes and monetization pathways.</p>
+          <div class="social" aria-label="ONROL on social media">
+            <a href="https://in.linkedin.com/company/onrol" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.4c0-1.29-.02-2.95-1.8-2.95-1.8 0-2.07 1.4-2.07 2.85V21H9z"/></svg></a>
+            <a href="https://www.instagram.com/onrol.in/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg></a>
+            <a href="https://www.youtube.com/@onrolofficial" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M23 12s0-3.2-.4-4.7a2.5 2.5 0 0 0-1.8-1.8C19.3 5 12 5 12 5s-7.3 0-8.8.5A2.5 2.5 0 0 0 1.4 7.3C1 8.8 1 12 1 12s0 3.2.4 4.7a2.5 2.5 0 0 0 1.8 1.8C4.7 19 12 19 12 19s7.3 0 8.8-.5a2.5 2.5 0 0 0 1.8-1.8C23 15.2 23 12 23 12zM9.8 15.3V8.7l5.7 3.3z"/></svg></a>
+            <a href="https://wa.me/919609312345" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.5 15.3L2 22l4.8-1.5A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.8.9.9-2.7-.2-.3A8 8 0 1 1 12 20zm4.4-5.9c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.6-1.2a.4.4 0 0 0 0-.4l-.8-1.9c-.2-.5-.4-.4-.5-.4h-.5a.9.9 0 0 0-.7.3 2.8 2.8 0 0 0-.9 2.1c0 1.2.9 2.4 1 2.6.1.2 1.8 2.8 4.4 3.9 1.6.7 2.2.7 3 .6.5 0 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1z"/></svg></a>
+          </div>
         </div>
         <div class="cell foot__col">
           <p class="foot__head">Explore</p>
           <a href="#how">How it works</a>
           <a href="#tracks">Tracks</a>
+          <a href="#curriculum">Curriculum</a>
+          <a href="#personas">Who it's for</a>
+          <a href="#apply">Apply</a>
         </div>
         <div class="cell foot__col">
-          <p class="foot__head">Connect</p>
-          <a href="https://www.linkedin.com/company/onrol" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <a href="https://www.instagram.com/onrol.in" target="_blank" rel="noopener noreferrer">Instagram</a>
-          <a href="https://www.youtube.com/@onrol" target="_blank" rel="noopener noreferrer">YouTube</a>
-          <a href="https://wa.me/919609312345" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          <p class="foot__head">Programs</p>
+          <a href="#apply">AI Generalist Program</a>
+          <a href="#apply">Free Masterclass</a>
+          <a href="#community">ONROL Community</a>
+          <a href="#learners">What learners build</a>
         </div>
         <div class="cell foot__col">
           <p class="foot__head">Contact</p>
           <a href="mailto:info@onrol.in">info@onrol.in</a>
           <a href="tel:+919609312345">96093 12345</a>
+          <span class="foot__note">Mon–Sun · 9 AM – 8 PM IST</span>
+          <span class="foot__note">Vivencia Educational Services · Jubilee Hills, Hyderabad</span>
         </div>
       </div>
-      <div class="bar foot__base"><span class="bar__ix">©</span><span class="bar__name">2026 ONROL</span><span class="bar__meta">India's AI Execution School</span></div>
+      <div class="bar foot__base"><span class="bar__ix">©</span><span class="bar__name">2026 ONROL — AI Execution School</span><span class="bar__meta">A Vivencia Educational Services brand</span></div>
     </footer>
 
   </div><!-- /.frame -->

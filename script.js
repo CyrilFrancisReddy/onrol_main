@@ -182,7 +182,7 @@ let lenis = null;
   nums.forEach((n) => io.observe(n));
 })();
 
-/* ===== Live counter (nash-style: counts up, then ticks live) ===== */
+/* ===== Stat counter — animates once up to the real cited figure, then holds ===== */
 (function () {
   const el = document.getElementById('liveNum');
   if (!el) return;
@@ -199,13 +199,9 @@ let lenis = null;
       cur = Math.round(base * (1 - Math.pow(1 - p, 3)));
       el.textContent = cur.toLocaleString('en-US');
       if (p < 1) requestAnimationFrame(tick);
-      else { render(); live(); }
+      else { render(); }
     })(t0);
   };
-  // subtle "live" increments so it feels real (very light: one timer)
-  function live() {
-    setInterval(() => { n += Math.floor(Math.random() * 3) + 1; render(); }, 4200);
-  }
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) { start(); io.disconnect(); } }); }, { threshold: 0.6 });
     io.observe(el);
@@ -307,10 +303,12 @@ let lenis = null;
   chips.addEventListener('click', (e) => {
     const c = e.target.closest('.chip'); if (!c) return;
     chips.querySelectorAll('.chip').forEach((x) => x.classList.toggle('is-active', x === c));
+    const name = c.textContent.trim();
     out.innerHTML = '';
-    out.appendChild(document.createTextNode('We’d start you on '));
-    const em = document.createElement('em'); em.textContent = c.dataset.rec; out.appendChild(em);
-    out.appendChild(document.createTextNode('.'));
+    const k = document.createElement('span'); k.className = 'chips__kicker'; k.textContent = 'How ONROL helps you';
+    const nm = document.createElement('span'); nm.className = 'chips__name'; nm.textContent = name;
+    const b = document.createElement('span'); b.className = 'chips__body'; b.textContent = c.dataset.rec;
+    out.append(k, nm, b);
   });
 })();
 
@@ -523,67 +521,175 @@ let lenis = null;
   })();
 })();
 
-/* ===== Pixel bot mascot (bottom-left): reacts to user actions, many emotions ===== */
+/* ===== Vector — 10×10 pixel bot: eyes follow the cursor, asks & answers ===== */
 (function () {
   const bot = document.getElementById('bot');
-  if (!bot) return;
-  const N = 20, cells = [];
-  for (let i = 0; i < N * N; i++) { const d = document.createElement('span'); d.className = 'bot__px'; bot.appendChild(d); cells.push(d); }
-  function clear() { for (const d of cells) d.className = 'bot__px'; }
-  function on(x, y, soft) { x = Math.round(x); y = Math.round(y); if (x < 0 || x >= N || y < 0 || y >= N) return; cells[y * N + x].className = 'bot__px on' + (soft ? ' on--soft' : ''); }
-  function box(x, y, w, h, soft) { for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) on(x + i, y + j, soft); }
+  const face = document.getElementById('botFace');
+  const matrix = document.getElementById('matrix');
+  const bubble = document.getElementById('botBubble');
+  if (!bot || !face || !matrix || !bubble) return;
 
-  const L = 6, R = 13; // eye columns  (bot name: Vector)
-  // big round eye with a sparkle highlight (cute)
-  function eyeRound(c) { on(c-1,6); on(c,6); on(c-2,7); on(c-1,7); on(c,7); on(c+1,7); on(c-2,8); on(c-1,8); on(c,8); on(c+1,8); on(c-1,9); on(c,9); on(c-2,7,true); }
-  function eyeBlinkE(c) { on(c-2,8); on(c-1,8); on(c,8); on(c+1,8); }
-  function eyeArc(c) { on(c-2,8); on(c-1,7); on(c,7); on(c+1,8); }                 // ^_^ happy
-  function eyeWide(c) { on(c-1,6); on(c,6); on(c-2,7); on(c+1,7); on(c-2,8); on(c+1,8); on(c-1,9); on(c,9); } // hollow O
-  function eyeHeartE(c, s) { on(c-2,6,s); on(c-1,6,s); on(c+1,6,s); on(c+2,6,s); on(c-2,7,s); on(c-1,7,s); on(c,7,s); on(c+1,7,s); on(c+2,7,s); on(c-1,8,s); on(c,8,s); on(c+1,8,s); on(c,9,s); }
-  function eyeSleepE(c) { on(c-2,8); on(c-1,9); on(c,9); on(c+1,8); }
-  function mSmile() { on(7,14); on(8,15); on(9,15); on(10,15); on(11,14); }
-  function mBigSmile() { on(6,13); on(12,13); on(7,14); on(8,14); on(9,14); on(10,14); on(11,14); on(8,15); on(9,15); on(10,15); }
-  function mCat() { on(7,14); on(8,15); on(9,14); on(10,15); on(11,14); }          // :3
-  function mO() { on(9,13); on(8,14); on(10,14); on(9,15); }
-  function mSad() { on(7,15); on(8,14); on(9,14); on(10,14); on(11,15); }
-  function mSmall() { on(8,14); on(9,14); on(10,14); }
+  const cells = [];
+  for (let i = 0; i < 100; i++) { const c = document.createElement('span'); c.className = 'px'; matrix.appendChild(c); cells.push(c); }
 
-  const faces = {
-    happy:     function () { eyeRound(L); eyeRound(R); mSmile(); },
-    grin:      function () { eyeArc(L); eyeArc(R); mBigSmile(); },
-    wink:      function () { eyeRound(L); eyeArc(R); mSmile(); },
-    surprised: function () { eyeWide(L); eyeWide(R); mO(); },
-    love:      function () { eyeHeartE(L); eyeHeartE(R); mCat(); },
-    cool:      function () { box(4, 7, 5, 2); box(11, 7, 5, 2); on(9, 8); mSmile(); },
-    sleepy:    function () { eyeSleepE(L); eyeSleepE(R); mSmall(); on(15, 4, true); on(16, 3, true); on(17, 2, true); },
-    sad:       function () { eyeRound(L); eyeRound(R); mSad(); on(3, 10, true); },
-    blink:     function () { eyeBlinkE(L); eyeBlinkE(R); mSmile(); },
-  };
-  let current = 'happy';
-  function show(n) { current = n; clear(); (faces[n] || faces.happy)(); }
+  let eox = 0, eoy = 0, mouth = 'smile', blink = false, busy = false;
+  function set(a, r, c) { if (r >= 0 && r < 10 && c >= 0 && c < 10) a[r * 10 + c] = true; }
+  function eyesBlock(a) { for (let r = 0; r < 2; r++) for (let c = 0; c < 2; c++) { set(a, 2 + eoy + r, 2 + eox + c); set(a, 2 + eoy + r, 6 + eox + c); } }
+  function eyesBlinkE(a) { for (let c = 0; c < 2; c++) { set(a, 3 + eoy, 2 + eox + c); set(a, 3 + eoy, 6 + eox + c); } }
+  function eyesHappy(a) { set(a, 3, 1); set(a, 2, 2); set(a, 3, 3); set(a, 3, 6); set(a, 2, 7); set(a, 3, 8); }
+  function eyesWink(a) { for (let r = 0; r < 2; r++) for (let c = 0; c < 2; c++) set(a, 2 + r, 2 + c); set(a, 3, 6); set(a, 3, 7); }
+  function eyesWide(a) { for (let r = 0; r < 2; r++) for (let c = 0; c < 3; c++) { set(a, 2 + r, 2 + c); set(a, 2 + r, 6 + c); } }
+  function eyesCool(a) { for (let c = 1; c <= 8; c++) set(a, 3, c); for (let c = 1; c <= 3; c++) set(a, 2, c); for (let c = 6; c <= 8; c++) set(a, 2, c); }
+  function mSmile(a) { set(a, 6, 0); set(a, 6, 9); set(a, 7, 1); set(a, 7, 8); for (let c = 2; c <= 7; c++) set(a, 8, c); }
+  function mOpen(a) { for (let c = 3; c <= 6; c++) { set(a, 5, c); set(a, 8, c); } set(a, 6, 2); set(a, 7, 2); set(a, 6, 7); set(a, 7, 7); }
+  function mGrin(a) { set(a, 6, 2); set(a, 6, 7); for (let c = 2; c <= 7; c++) set(a, 7, c); for (let c = 3; c <= 6; c++) set(a, 8, c); }
+  function mThink(a) { set(a, 8, 4); set(a, 8, 5); set(a, 8, 6); set(a, 7, 6); }
+  function mSad(a) { set(a, 6, 3); set(a, 6, 4); set(a, 6, 5); set(a, 6, 6); set(a, 7, 2); set(a, 7, 7); }
 
-  let holdUntil = 0, asleep = false, sleepAt = performance.now() + 13000;
-  let pi = 0, switchAt = 0, blinkAt = 1800;
-  const pool = ['happy', 'happy', 'grin', 'wink', 'cool', 'love'];
-  function react(n, ms) { show(n); holdUntil = performance.now() + (ms || 900); }
-  function wake() { sleepAt = performance.now() + 13000; if (asleep) { asleep = false; holdUntil = 0; } }
-  function tick() {
-    const t = performance.now();
-    if (asleep) return;
-    if (t < holdUntil) return;
-    if (t > sleepAt) { asleep = true; show('sleepy'); return; }
-    if (t > switchAt) { show(pool[pi++ % pool.length]); switchAt = t + 3200 + Math.random() * 1800; }
-    if (t > blinkAt) { const p = current; clear(); faces.blink(); blinkAt = t + 3600 + Math.random() * 3000; setTimeout(function () { if (!asleep && performance.now() >= holdUntil) show(p); }, 130); }
+  function draw() {
+    const a = new Array(100).fill(false), m = mouth;
+    if (m === 'happy') eyesHappy(a);
+    else if (m === 'wink') eyesWink(a);
+    else if (m === 'cool') eyesCool(a);
+    else if (m === 'wow') eyesWide(a);
+    else if (blink) eyesBlinkE(a);
+    else eyesBlock(a);
+    if (m === 'open' || m === 'wow') mOpen(a);
+    else if (m === 'grin') mGrin(a);
+    else if (m === 'think') mThink(a);
+    else if (m === 'sad') mSad(a);
+    else mSmile(a);
+    for (let i = 0; i < 100; i++) cells[i].classList.toggle('on', a[i]);
   }
-  show('happy');
-  setInterval(tick, 300);
 
-  window.addEventListener('mousedown', function () { react('surprised', 650); wake(); }, { passive: true });
-  window.addEventListener('scroll', function () { react('grin', 600); wake(); }, { passive: true });
-  window.addEventListener('mousemove', wake, { passive: true });
-  window.addEventListener('keydown', wake);
-  bot.addEventListener('mouseenter', function () { react('love', 1200); });
-  bot.addEventListener('click', function (e) { e.stopPropagation(); react('love', 1500); });
-  const tb = document.getElementById('themeBtn'); if (tb) tb.addEventListener('click', function () { react('wink', 900); });
-  const af = document.getElementById('applyForm'); if (af) af.addEventListener('submit', function () { react('love', 1800); });
+  // eyes follow the cursor (face is fixed-position → cache its centre)
+  let fcx = 0, fcy = 0;
+  function faceCenter() { const r = face.getBoundingClientRect(); fcx = r.left + r.width / 2; fcy = r.top + r.height / 2; }
+  faceCenter(); window.addEventListener('resize', faceCenter);
+  window.addEventListener('mousemove', function (e) {
+    const nx = Math.max(-1, Math.min(1, Math.round((e.clientX - fcx) / 240)));
+    const ny = Math.max(-1, Math.min(1, Math.round((e.clientY - fcy) / 240)));
+    if (nx === eox && ny === eoy) return;
+    eox = nx; eoy = ny; draw();
+  }, { passive: true });
+  face.addEventListener('mouseenter', function () { if (!busy) { mouth = 'grin'; draw(); } });
+  face.addEventListener('mouseleave', function () { if (!busy) { mouth = 'smile'; draw(); } });
+
+  setInterval(function () { if (busy) return; blink = true; draw(); setTimeout(function () { blink = false; draw(); }, 130); }, 3200);
+  const idleExpr = ['happy', 'wink', 'grin', 'cool'];
+  setInterval(function () {
+    if (busy || bot.classList.contains('asking')) return;
+    mouth = idleExpr[Math.floor(Math.random() * idleExpr.length)]; draw();
+    setTimeout(function () { if (!busy && !bot.classList.contains('asking')) { mouth = 'smile'; draw(); } }, 1100);
+  }, 6500);
+
+  const askForm = document.getElementById('botAsk');
+  const input = document.getElementById('botInput');
+  let t, typeT;
+  function say(msg, ms) {
+    bubble.textContent = msg; bubble.classList.remove('is-hidden');
+    busy = true; mouth = 'smile'; blink = false; draw();
+    clearTimeout(t);
+    t = setTimeout(function () { busy = false; draw(); if (!bot.classList.contains('asking')) bubble.classList.add('is-hidden'); }, ms || 4500);
+  }
+  face.addEventListener('click', function () {
+    const open = !bot.classList.contains('asking');
+    bot.classList.toggle('asking', open);
+    if (open) { say('ask me anything ✦', 999999); if (input) input.focus(); }
+    else { bubble.classList.add('is-hidden'); }
+  });
+
+  const KB = [
+    [/(price|cost|fee|much|paid|free)/, 'Start free with the masterclass — email info@onrol.in for fees.'],
+    [/(long|duration|days|time|weeks|month)/, "It's 30 days — live & online."],
+    [/(cod|technical|program|develop)/, 'No coding needed to start.'],
+    [/agent/, "You'll build tool-using AI agents that reason & call APIs."],
+    [/(web|site|app)/, "You'll ship vibe-coded websites & apps."],
+    [/automat/, "You'll build AI automations for real operations."],
+    [/(who|persona|beginner|student|founder|for me)/, 'Built for 12 personas — students to founders.'],
+    [/(apply|join|enroll|start|register|sign)/, 'Apply at info@onrol.in or the Apply button.'],
+    [/(contact|email|phone|reach|whatsapp|call)/, 'info@onrol.in'],
+    [/(hi|hello|hey|name|who are you)/, 'I am Vector — ask me about ONROL.']
+  ];
+  function typeOut(text) {
+    busy = true; mouth = 'think'; blink = false; draw();
+    bubble.classList.remove('is-hidden'); bubble.textContent = '…';
+    clearTimeout(t); clearTimeout(typeT);
+    let i = 0;
+    setTimeout(function step() {
+      if (i === 0) { bubble.textContent = ''; mouth = 'grin'; draw(); }
+      bubble.textContent = text.slice(0, ++i);
+      if (i < text.length) typeT = setTimeout(step, 24);
+      else t = setTimeout(function () { busy = false; draw(); if (!bot.classList.contains('asking')) bubble.classList.add('is-hidden'); }, 7000);
+    }, 420);
+  }
+  if (askForm) askForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const q = (input.value || '').toLowerCase().trim();
+    if (!q) return;
+    let ans = 'Try: pricing, duration, agents, websites, or apply…';
+    for (let i = 0; i < KB.length; i++) { if (KB[i][0].test(q)) { ans = KB[i][1]; break; } }
+    typeOut(ans); input.value = '';
+  });
+
+  document.addEventListener('onrol:askvector', function () {
+    if (!bot.classList.contains('asking')) { bot.classList.add('asking'); say('ask me anything ✦', 999999); }
+    if (input) input.focus();
+  });
+  window.addEventListener('keydown', function (e) {
+    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+    if (e.key === '/') { e.preventDefault(); document.dispatchEvent(new CustomEvent('onrol:askvector')); }
+  });
+
+  // react when a new section scrolls past the middle of the viewport
+  const slideMsgs = ['I am Vector ✦', '3 steps to shipped work.', 'Agents, automations & real sites.', 'Try building with AI →', "There's a track for your persona.", 'Ready? info@onrol.in'];
+  let rt1, rt2;
+  document.addEventListener('onrol:slide', function (e) {
+    if (bot.classList.contains('asking')) return;
+    busy = true; mouth = 'wow'; blink = false; draw();
+    bubble.textContent = slideMsgs[e.detail] || ''; bubble.classList.remove('is-hidden');
+    clearTimeout(rt1); clearTimeout(rt2);
+    rt1 = setTimeout(function () { mouth = 'smile'; draw(); }, 750);
+    rt2 = setTimeout(function () { busy = false; bubble.classList.add('is-hidden'); }, 3600);
+  });
+  (function () {
+    const secs = Array.prototype.slice.call(document.querySelectorAll('main > section.mod'));
+    if (!secs.length || !('IntersectionObserver' in window)) return;
+    let last = -1;
+    const io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        const i = secs.indexOf(en.target);
+        if (i !== last) { last = i; document.dispatchEvent(new CustomEvent('onrol:slide', { detail: i })); }
+      });
+    }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+    secs.forEach(function (s) { io.observe(s); });
+  })();
+
+  draw();
+})();
+
+/* ===== Big brand wordmark docks into the nav on scroll ===== */
+(function () {
+  const bm = document.querySelector('.brandmark');
+  if (!bm) return;
+  function onScroll() { bm.classList.toggle('is-docked', window.scrollY > 40); }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
+/* ===== Hero title cell: cross-fading image slideshow (every 5s) ===== */
+(function () {
+  const a = document.getElementById('heroBgA'), b = document.getElementById('heroBgB');
+  if (!a || !b) return;
+  const pool = [];   // hero uses the CSS orange gradient (no photo)
+  pool.forEach(function (u) { const im = new Image(); im.src = u; });   // preload
+  let k = 0, front = a, back = b;
+  if (pool.length) { a.style.backgroundImage = "url('" + pool[0] + "')"; a.classList.add('is-on'); }
+  if (pool.length > 1) setInterval(function () {
+    k = (k + 1) % pool.length;
+    back.style.backgroundImage = "url('" + pool[k] + "')";
+    back.classList.add('is-on'); front.classList.remove('is-on');   // cross-fade
+    const tmp = front; front = back; back = tmp;
+  }, 5000);
 })();
